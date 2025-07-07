@@ -20,7 +20,6 @@ A fully functional **eCommerce marketplace** built with **Django** and powered m
 - **Frontend:** HTML5, Tailwind css
 - **Templating:** Django Templates
 - **Deployment:** Procfile for Heroku/Render
-- *(Bootstrap, or JS frameworks used)*
 
 ---
 
