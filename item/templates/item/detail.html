@@ -3,54 +3,56 @@
 {% block title %}{{ item.name }}{% endblock %}
 
 {% block content %}
-<div class="grid grid-cols-5 gap-6">
-    <div class="col-span-3">
-        <img src="{{ item.image.url }}" class="rounded-xl">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+    <!-- Item Image -->
+    <div class="md:col-span-3">
+      <img src="{{ item.image.url }}" alt="{{ item.name }}" class="rounded-xl w-full object-cover max-h-[400px] mx-auto">
     </div>
 
-    <div class="col-span-2 p-6 bg-gray-100 rounded-xl">
-        <h1 class="mb-6 text-3xl">{{ item.name }}</h1>
-        <p class="text-gray-500"><strong>Price: </strong>{{ item.price }}</p>
-        <p class="text-gray-500"><strong>Seller: </strong>{{ item.created_by.username }}</p>
-    
-        {% if item.description %}
-            <p class="text-gray-700">
-                <strong class="text-gray-500">Description:</strong><br>
-                {{ item.description }}
-            </p>
-        {% endif %}
+    <!-- Item Info -->
+    <div class="md:col-span-2 bg-gray-100 p-6 rounded-xl flex flex-col">
+      <h1 class="text-3xl font-semibold mb-4">{{ item.name }}</h1>
+      <p class="text-gray-700 mb-2"><strong>Price:</strong> {{ item.price }}</p>
+      <p class="text-gray-700 mb-4"><strong>Seller:</strong> {{ item.created_by.username }}</p>
 
-        {% if request.user == item.created_by %}
-            <div class="mt-6 p-6 bg-white rounded-xl">
-                <p>This is your item!</p>
+      {% if item.description %}
+        <div class="mb-6 text-gray-700">
+          <strong class="text-gray-500">Description:</strong>
+          <p class="mt-2 whitespace-pre-wrap">{{ item.description }}</p>
+        </div>
+      {% endif %}
 
-                <a href="{% url 'item:edit' item.id %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl">Edit</a>
-                <a href="{% url 'item:delete' item.id %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-red-500 text-white rounded-xl">Delete</a>
+      {% if request.user == item.created_by %}
+        <div class="mt-auto bg-white p-6 rounded-xl shadow-inner">
+          <p class="mb-4 font-semibold text-teal-700">This is your item!</p>
+          <div class="flex flex-col space-y-4 md:space-y-0 md:flex-row md:space-x-4">
+            <a href="{% url 'item:edit' item.id %}" class="text-center px-6 py-3 bg-teal-500 text-white rounded-xl hover:bg-teal-700 transition">Edit</a>
+            <a href="{% url 'item:delete' item.id %}" class="text-center px-6 py-3 bg-red-500 text-white rounded-xl hover:bg-red-700 transition">Delete</a>
+          </div>
+        </div>
+      {% else %}
+        <a href="{% url 'conversation:new' item.id %}" class="mt-auto inline-block px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700 text-center transition">Contact seller</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Related Items Section -->
+  <section class="mt-12 bg-gray-100 rounded-xl py-12 px-6">
+    <h2 class="mb-12 text-2xl md:text-3xl font-semibold text-center">Related Items</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
+      {% for item in related_items %}
+        <article class="bg-white rounded-xl shadow hover:shadow-lg transition p-4">
+          <a href="{% url 'item:detail' item.id %}" class="block">
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="rounded-t-xl w-full h-48 object-cover">
+            <div class="pt-4">
+              <h3 class="text-xl font-semibold">{{ item.name }}</h3>
+              <p class="text-gray-500 mt-1">Price: {{ item.price }}</p>
             </div>
-        {% else %}  
-            <a href="{% url 'conversation:new' item.id %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Contact seller</a>
-        {% endif %}
+          </a>
+        </article>
+      {% endfor %}
     </div>
-</div>
-
-<div class="mt-6 px-6 py-12 bg-gray-100 rounded-xl">
-    <h2 class="mb-12 text-2xl text-center">Related items</h2>
-
-    <div class="grid grid-cols-3 gap-3">
-        {% for item in related_items %}
-            <div>
-                <a href="{% url 'item:detail' item.id %}">
-                    <div>
-                        <img src="{{ item.image.url }}" class="rounded-t-xl">
-                    </div>
-
-                    <div class="p-6 bg-white rounded-b-xl">
-                        <h2 class="text-2xl">{{ item.name }}</h2>
-                        <p class="text-gray-500">Price: {{ item.price }}</p>
-                    </div>
-                </a>
-            </div>
-        {% endfor %}
-    </div>
+  </section>
 </div>
 {% endblock %}
